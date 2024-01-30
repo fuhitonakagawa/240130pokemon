@@ -57,7 +57,7 @@ module.exports = configure(function (/* ctx */) {
     build: {
       target: {
         browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
-        node: 'node20'
+        node: 'node18'
       },
       env: {
         API_BASE_URL: process.env.VUE_APP_API_BASE_URL
@@ -91,6 +91,7 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
+      port: 3000,
       open: true // opens browser window automatically
     },
 
