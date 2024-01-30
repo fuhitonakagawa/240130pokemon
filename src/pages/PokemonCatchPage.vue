@@ -1,11 +1,7 @@
 <template>
   <div class="pokemon-catch-page q-pa-md">
     <h4>ポケモンゲット</h4>
-    <q-btn
-    label="トレーナー情報に戻る"
-    @click="goToInfoPage"
-    color="primary"
-  />
+    <q-btn label="トレーナー情報に戻る" @click="goToInfoPage" color="primary" />
     <q-pagination
       v-model="currentPage"
       :max="maxPages"
@@ -104,6 +100,10 @@ export default {
       }
     },
     async getPokemons(pokemon) {
+      if (pokemon.image === "none") {
+        this.showMessage("エラー", "それは存在しないポケモンです！");
+        return;
+      }
       // 既にポケモンがトレーナーのリストに存在するかチェック
       if (this.trainer.pokemons.some((p) => p.name === pokemon.name)) {
         this.showMessage("エラー", "このポケモンは既に持っています！");
@@ -129,7 +129,7 @@ export default {
       this.isLoading = false;
     },
     goToInfoPage() {
-      this.$router.push({ name: 'TrainerInfoPage' });
+      this.$router.push({ name: "TrainerInfoPage" });
     },
   },
 };

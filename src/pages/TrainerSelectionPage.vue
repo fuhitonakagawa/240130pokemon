@@ -3,19 +3,19 @@
     <h4>トレーナー選択</h4>
     <q-btn label="トップページに戻る" @click="goToStartPage" color="primary" />
     <div v-for="trainer in trainers" :key="trainer.name" class="q-my-md">
-    <q-card>
-      <q-card-section>
-        <div class="text-h6">{{ trainer.name }}</div>
-        <div class="pokemon-container">
-          <q-img
-            v-for="pokemon in trainer.pokemons"
-            :key="pokemon.name"
-            :src="pokemon.image"
-            :alt="pokemon.name"
-            class="pokemon-image"
-          />
-        </div>
-      </q-card-section>
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">{{ trainer.name }}</div>
+          <div class="pokemon-container">
+            <q-img
+              v-for="pokemon in trainer.pokemons"
+              :key="pokemon.name"
+              :src="pokemon.image"
+              :alt="pokemon.name"
+              class="pokemon-image"
+            />
+          </div>
+        </q-card-section>
         <q-card-actions>
           <q-btn label="選択" @click="selectTrainer(trainer.name)" />
           <q-btn
@@ -31,7 +31,7 @@
 
 <style>
 .pokemon-container {
-  display: flex; 
+  display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -89,6 +89,7 @@ export default {
       try {
         await deleteTrainer(trainerName);
         this.trainers = this.trainers.filter((t) => t !== trainerName);
+        window.location.reload();
       } catch (error) {
         console.error("Failed to delete trainer:", error);
       }

@@ -1,8 +1,3 @@
-// import express from 'express';
-// import cors from 'cors';
-// import trainerRoutes from '../router/trainerRoutes';
-// import pokemonRoutes from '../router/pokemonRoutes';
-
 const express = require('express');
 const cors = require('cors');
 const trainerRoutes = require('../router/trainerRoutes');

@@ -18,26 +18,32 @@ const getPokemonInfo = async (pokemonName) => {
 
 // ポケモン一覧を取得する関数
 const getPokemons = async (page, limit = 200) => {
-  try {
-    const startId = (page - 1) * limit + 1;
-    const endId = startId + limit;
-    const pokemonsWithImages = [];
+  const startId = (page - 1) * limit + 1;
+  const endId = startId + limit;
 
-    for (let id = startId; id < endId; id++) {
-      const pokemonDetailResponse = await axios.get(`${POKEAPI_BASE_URL}/pokemon/${id}`);
-      const pokemon = pokemonDetailResponse.data;
-      pokemonsWithImages.push({
+  const pokemonPromises = [];
+  for (let id = startId; id < endId; id++) {
+    pokemonPromises.push(
+      axios.get(`${POKEAPI_BASE_URL}/pokemon/${id}`).catch(() => null)
+    );
+  }
+
+  const pokemonResponses = await Promise.all(pokemonPromises);
+  const pokemonsWithImages = pokemonResponses.map((response, index) => {
+    if (response === null) {
+      return { name: `id-${startId + index}`, image: 'none' };
+    } else {
+      const pokemon = response.data;
+      return {
         name: pokemon.name,
         image: pokemon.sprites.front_default
-      });
+      };
     }
+  });
 
-    return pokemonsWithImages;
-  } catch (error) {
-    console.error('Error fetching pokemons:', error);
-    throw error;
-  }
+  return pokemonsWithImages;
 };
+
 
 const getTotalPages = async (limit) => {
   try {

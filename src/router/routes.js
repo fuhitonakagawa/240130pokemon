@@ -1,4 +1,3 @@
-// src/router/routes.js
 import StartPage from '../pages/StartPage.vue';
 import TrainerSelectionPage from '../pages/TrainerSelectionPage.vue';
 import TrainerCreationPage from '../pages/TrainerCreationPage.vue';
