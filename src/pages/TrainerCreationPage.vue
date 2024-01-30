@@ -3,46 +3,56 @@
     <h1>トレーナー作成</h1>
     <q-input v-model="trainerName" label="トレーナー名" />
     <q-btn label="作成" @click="createTrainer" />
-    <MessageBox :title="msgBoxTitle" :message="msgBoxMessage" v-model:modelValue="showMsgBox" />
+    <MessageBox
+      :title="msgBoxTitle"
+      :message="msgBoxMessage"
+      v-model:modelValue="showMsgBox"
+    />
   </div>
 </template>
 
 <script>
-import { createTrainer } from '../services/trainerService';
-import MessageBox from '/src/components/MessageBox.vue';
+import { createTrainer } from "../services/trainerService";
+import MessageBox from "/src/components/MessageBox.vue";
 
 export default {
   components: {
-    MessageBox
+    MessageBox,
   },
   data() {
     return {
-      trainerName: '',
+      trainerName: "",
       pokemons: [],
       showMsgBox: false,
-      msgBoxTitle: '',
-      msgBoxMessage: ''
+      msgBoxTitle: "",
+      msgBoxMessage: "",
     };
   },
   methods: {
     async createTrainer() {
       if (!this.trainerName) {
-        this.showMessage('エラー', 'トレーナー名を入力してください');
+        this.showMessage("エラー", "トレーナー名を入力してください");
         return;
       }
 
       try {
-        await createTrainer({ name: this.trainerName });
-        this.$router.push({ name: 'TrainerInfoPage', params: { trainerName: this.trainerName, pokemons: this.pokemons } });
+        await createTrainer({
+          name: this.trainerName,
+          pokemons: this.pokemons,
+        });
+        this.$router.push({
+          name: "TrainerInfoPage",
+          params: { trainerName: this.trainerName },
+        });
       } catch (error) {
-        this.showMessage('エラー', 'トレーナーの作成に失敗しました');
+        this.showMessage("エラー", "トレーナーの作成に失敗しました");
       }
     },
     showMessage(title, message) {
       this.msgBoxTitle = title;
       this.msgBoxMessage = message;
       this.showMsgBox = true;
-    }
-  }
+    },
+  },
 };
 </script>

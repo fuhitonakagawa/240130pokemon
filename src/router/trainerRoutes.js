@@ -66,7 +66,6 @@ router.get("/:trainerName", async (req, res) => {
 router.post("/", async (req, res) => {
   const trainerData = req.body;
   const fileName = `trainers/${trainerData.name}.json`; // トレーナー名をファイル名とする
-
   try {
     await s3Client.send(
       new PutObjectCommand({
@@ -87,13 +86,14 @@ router.post("/", async (req, res) => {
 router.put("/:trainerName", upload.single("file"), async (req, res) => {
   const { trainerName } = req.params;
   const fileName = `trainers/${trainerName}.json`;
-  const file = req.file;
+  const file = req.body;
   try {
+    const fileContent = JSON.stringify(file);
     await s3Client.send(
       new PutObjectCommand({
         Bucket: BUCKET_NAME,
         Key: fileName,
-        Body: file.buffer,
+        Body: fileContent,
       })
     );
     res.send(`File ${fileName} saved successfully`);
