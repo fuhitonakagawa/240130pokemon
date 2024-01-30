@@ -1,12 +1,13 @@
 <template>
   <h4>トレーナー情報画面</h4>
   <div class="trainer-info-page q-pa-md">
+    <q-btn color="primary" @click="goToPokemonCatchPage">ポケモンゲット</q-btn>
     <q-card v-if="trainer">
       <q-card-section>
         <div class="text-h6">{{ trainer.name }}</div>
         <div v-if="trainer.pokemons && trainer.pokemons.length > 0">
           <div
-            v-for="pokemon in trainer.pokemons"
+            v-for="(pokemon, index) in trainer.pokemons"
             :key="pokemon.name"
             class="q-mb-md"
           >
@@ -18,20 +19,20 @@
             <div>
               <h3>{{ pokemon.nickname || pokemon.name }}</h3>
             </div>
-            <q-input filled v-model="pokemon.nickname" label="ニックネーム" />
-            <!-- <q-input
+            <q-input
               filled
-              :value="tempNicknames[pokemon.name]"
-              @input="tempNicknames[pokemon.name] = $event"
+              v-model="tempNicknames[index]"
               label="ニックネーム"
-            /> -->
-            <q-btn label="ニックネーム保存" @click="saveNickname(pokemon)" />
+            />
+            <q-btn
+              label="ニックネーム保存"
+              @click="saveNickname(pokemon, index)"
+            />
           </div>
         </div>
         <div v-else>ポケモンを持っていません。</div>
       </q-card-section>
     </q-card>
-    <q-btn color="primary" @click="goToPokemonCatchPage">ポケモンゲット</q-btn>
   </div>
 </template>
 
@@ -50,6 +51,7 @@ export default {
   data() {
     return {
       trainer: null,
+      tempNicknames: [], // 一時的なニックネームを保持するオブジェクト
     };
   },
   async created() {
@@ -69,29 +71,40 @@ export default {
         );
 
         this.trainer = { ...trainerData, pokemons: pokemonsWithImages };
+        // tempNicknamesの初期化
+        this.trainer.pokemons.forEach((pokemon) => {
+          this.tempNicknames[pokemon.name] = pokemon.nickname || "";
+        });
       } catch (error) {
         console.error("Error:", error);
       }
     },
 
-    async saveNickname(pokemon) {
+    async saveNickname(pokemon, index) {
       try {
-        // トレーナーデータの取得
-        const trainerData = await fetchTrainerInfo(this.trainer.name);
+        const newNickname = this.tempNicknames[index];
+        console.log("new: " + newNickname);
+        if (newNickname !== undefined) {
+          // トレーナーデータの取得
+          const trainerData = await fetchTrainerInfo(this.trainer.name);
 
-        // 更新するポケモンの名前を変更
-        const pokemonIndex = trainerData.pokemons.findIndex(
-          (p) => p.name === pokemon.name
-        );
-        if (pokemonIndex !== -1) {
-          trainerData.pokemons[pokemonIndex].nickname = pokemon.nickname;
+          // 更新するポケモンのニックネームを変更
+          const pokemonIndex = trainerData.pokemons.findIndex(
+            (p) => p.name === pokemon.name
+          );
+          if (pokemonIndex !== -1) {
+            trainerData.pokemons[pokemonIndex].nickname = newNickname;
+          }
+
+          // トレーナーデータをサーバーに送信
+          await updateTrainer(this.trainer.name, trainerData);
+
+          // 一時的なニックネームをクリア
+          this.tempNicknames[index] = "";
+
+          // 画面を更新
+          this.loadTrainerData();
         }
-
-        // トレーナーデータをサーバーに送信
-        await updateTrainer(this.trainer.name, trainerData);
-
-        // 画面を更新
-        this.loadTrainerData();
       } catch (error) {
         console.error("ニックネームの保存に失敗しました:", error);
       }
