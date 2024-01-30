@@ -5,11 +5,14 @@
     <q-card v-if="trainer">
       <q-card-section>
         <div class="text-h6">{{ trainer.name }}</div>
-        <div v-if="trainer.pokemons && trainer.pokemons.length > 0">
+        <div
+          v-if="trainer.pokemons && trainer.pokemons.length > 0"
+          class="pokemon-container"
+        >
           <div
             v-for="(pokemon, index) in trainer.pokemons"
             :key="pokemon.name"
-            class="q-mb-md"
+            class="pokemon-item"
           >
             <q-img
               :src="pokemon.image"
@@ -37,6 +40,18 @@
 </template>
 
 <style>
+.pokemon-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pokemon-item {
+  flex: 1 1 300px;
+  margin: 10px;
+  max-width: 300px; /* Limit the maximum width */
+}
+
 .pokemon-image {
   height: 300px;
   width: 300px;

@@ -1,25 +1,27 @@
 <template>
   <div class="pokemon-catch-page q-pa-md">
     <h4>ポケモンゲット</h4>
-    <q-row v-for="pokemon in pokemons" :key="pokemon.name">
-      <!-- ポケモンの画像 -->
-      <q-col cols="4">
-        <q-img
-          :src="pokemon.image"
-          :alt="pokemon.name"
-          class="pokemon-image"
-          no-ratio
-        />
-      </q-col>
-      <!-- ポケモンの名前 -->
-      <q-col cols="4" class="pokemon-name">
-        {{ pokemon.name }}
-      </q-col>
-      <!-- ゲットボタン -->
-      <q-col cols="4">
-        <q-btn label="ゲット" @click="getPokemons(pokemon)" />
-      </q-col>
-    </q-row>
+    <div class="pokemon-container">
+      <div
+        v-for="pokemon in pokemons"
+        :key="pokemon.name"
+        class="pokemon-item"
+      >
+        <q-card class="pokemon-card">
+          <q-card-section>
+            <div class="text-center">
+              <q-img
+                :src="pokemon.image"
+                :alt="pokemon.name"
+                class="pokemon-image"
+              />
+              <div class="q-mt-md">{{ pokemon.name }}</div>
+              <q-btn label="ゲット" @click="getPokemons(pokemon)" />
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
     <MessageBox
       :title="msgBoxTitle"
       :message="msgBoxMessage"
@@ -29,11 +31,27 @@
 </template>
 
 <style>
+.pokemon-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pokemon-item {
+  flex: 1 1 300px; /* フレックスアイテムの基本サイズを300pxに設定 */
+  margin: 10px;
+}
+
+.pokemon-card {
+  max-width: 300px; /* カードの最大幅を設定 */
+}
+
 .pokemon-image {
   height: 300px;
   width: 300px;
 }
 </style>
+
 
 <script>
 import { getPokemons } from "../services/pokemonService";
