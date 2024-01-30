@@ -80,7 +80,7 @@ export default {
       msgBoxMessage: "",
       currentPage: 1,
       maxPages: 0,
-      limit: 100,
+      limit: 50,
       isLoading: false,
     };
   },

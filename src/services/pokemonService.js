@@ -39,7 +39,6 @@ const getPokemons = async (page, limit = 200) => {
   }
 };
 
-// Function to get the total number of pages
 const getTotalPages = async (limit) => {
   try {
     const response = await axios.get(`${POKEAPI_BASE_URL}/pokemon`);
@@ -50,8 +49,5 @@ const getTotalPages = async (limit) => {
     throw error;
   }
 };
-
-
-
 
 export { getPokemonInfo, getPokemons, getTotalPages };
