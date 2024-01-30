@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>トレーナー作成</h1>
+    <h4>トレーナー作成</h4>
     <q-input v-model="trainerName" label="トレーナー名" />
     <q-btn label="作成" @click="createTrainer" />
     <MessageBox

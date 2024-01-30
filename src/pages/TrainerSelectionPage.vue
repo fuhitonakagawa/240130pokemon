@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>トレーナー選択</h1>
+    <h4>トレーナー選択</h4>
     <q-btn label="トップページに戻る" @click="goToStartPage" color="primary" />
     <div v-for="trainer in trainers" :key="trainer">
       <q-item-label>{{ trainer }}</q-item-label>
@@ -40,6 +40,9 @@ export default {
       } catch (error) {
         console.error("Failed to delete trainer:", error);
       }
+    },
+    goToStartPage() {
+      this.$router.push({ name: "StartPage" });
     },
   },
 };
