@@ -31,6 +31,11 @@
               label="ニックネーム保存"
               @click="saveNickname(pokemon, index)"
             />
+            <q-btn
+              label="削除"
+              color="negative"
+              @click="removePokemon(pokemon.name)"
+            />
           </div>
         </div>
         <div v-else>ポケモンを持っていません。</div>
@@ -122,6 +127,22 @@ export default {
         }
       } catch (error) {
         console.error("ニックネームの保存に失敗しました:", error);
+      }
+    },
+    async removePokemon(pokemonName) {
+      try {
+        // Filter out the Pokémon to be removed
+        this.trainer.pokemons = this.trainer.pokemons.filter(
+          (p) => p.name !== pokemonName
+        );
+
+        // Update the trainer data on the server
+        await updateTrainer(this.trainer.name, this.trainer);
+
+        // Optionally, reload trainer data or handle UI update
+        this.loadTrainerData();
+      } catch (error) {
+        console.error("Error removing pokemon:", error);
       }
     },
     goToPokemonCatchPage() {
