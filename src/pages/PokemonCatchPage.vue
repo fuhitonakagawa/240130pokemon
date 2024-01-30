@@ -1,12 +1,16 @@
 <template>
   <div class="pokemon-catch-page q-pa-md">
     <h4>ポケモンゲット</h4>
-    <div class="pokemon-container">
-      <div
-        v-for="pokemon in pokemons"
-        :key="pokemon.name"
-        class="pokemon-item"
-      >
+    <q-pagination
+      v-model="currentPage"
+      :max="maxPages"
+      @update:modelValue="fetchPokemons"
+    />
+    <div v-if="isLoading" class="q-pa-md">
+      <q-spinner color="primary" size="50px" />
+    </div>
+    <div v-else class="pokemon-container">
+      <div v-for="pokemon in pokemons" :key="pokemon.name" class="pokemon-item">
         <q-card class="pokemon-card">
           <q-card-section>
             <div class="text-center">
@@ -52,9 +56,8 @@
 }
 </style>
 
-
 <script>
-import { getPokemons } from "../services/pokemonService";
+import { getPokemons, getTotalPages } from "../services/pokemonService";
 import { updateTrainer, fetchTrainerInfo } from "../services/trainerService";
 import MessageBox from "src/components/MessageBox.vue";
 
@@ -70,11 +73,16 @@ export default {
       showMsgBox: false,
       msgBoxTitle: "",
       msgBoxMessage: "",
+      currentPage: 1,
+      maxPages: 0,
+      limit: 100,
+      isLoading: false,
     };
   },
   async created() {
-    this.pokemons = await getPokemons();
-    this.trainerName = this.$route.params.trainerName; // URLからトレーナー名を取得
+    this.maxPages = await getTotalPages(this.limit);
+    this.fetchPokemons(this.currentPage);
+    this.trainerName = this.$route.params.trainerName;
     await this.loadTrainerData();
   },
   methods: {
@@ -109,6 +117,11 @@ export default {
       } catch (error) {
         console.error("ポケモンの取得に失敗しました:", error);
       }
+    },
+    async fetchPokemons(page) {
+      this.isLoading = true;
+      this.pokemons = await getPokemons(page, this.limit);
+      this.isLoading = false;
     },
   },
 };

@@ -17,19 +17,20 @@ const getPokemonInfo = async (pokemonName) => {
 };
 
 // ポケモン一覧を取得する関数
-const getPokemons = async () => {
+const getPokemons = async (page, limit = 200) => {
   try {
-    const response = await axios.get(`${POKEAPI_BASE_URL}/pokemon?limit=50`);
-    const pokemonList = response.data.results;
+    const startId = (page - 1) * limit + 1;
+    const endId = startId + limit;
+    const pokemonsWithImages = [];
 
-    const pokemonsWithImages = await Promise.all(pokemonList.map(async (pokemon) => {
-      const pokemonDetail = await axios.get(pokemon.url);
-      const image = pokemonDetail.data.sprites.front_default;
-      return {
+    for (let id = startId; id < endId; id++) {
+      const pokemonDetailResponse = await axios.get(`${POKEAPI_BASE_URL}/pokemon/${id}`);
+      const pokemon = pokemonDetailResponse.data;
+      pokemonsWithImages.push({
         name: pokemon.name,
-        image
-      };
-    }));
+        image: pokemon.sprites.front_default
+      });
+    }
 
     return pokemonsWithImages;
   } catch (error) {
@@ -38,5 +39,19 @@ const getPokemons = async () => {
   }
 };
 
+// Function to get the total number of pages
+const getTotalPages = async (limit) => {
+  try {
+    const response = await axios.get(`${POKEAPI_BASE_URL}/pokemon`);
+    const totalPokemons = response.data.count;
+    return Math.ceil(totalPokemons / limit);
+  } catch (error) {
+    console.error('Error fetching total number of pokemons:', error);
+    throw error;
+  }
+};
 
-export { getPokemonInfo, getPokemons };
+
+
+
+export { getPokemonInfo, getPokemons, getTotalPages };
