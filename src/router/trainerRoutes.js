@@ -1,11 +1,9 @@
-// import { S3Client, ListObjectsCommand, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-// import express from 'express';
-// import multer from 'multer';
 const {
   S3Client,
   ListObjectsCommand,
   GetObjectCommand,
   PutObjectCommand,
+  DeleteObjectCommand
 } = require("@aws-sdk/client-s3");
 const express = require("express");
 const multer = require("multer");
@@ -17,11 +15,6 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const AWS_REGION = "ap-northeast-1";
 const BUCKET_NAME = "ppppppppppppppppokemon"; // トレーナー情報を保存するバケット名
-
-// S3Clientの初期化
-// const s3Client = new S3Client({ 
-//   region: AWS_REGION,
-// });
 
 const agent = new ProxyAgent();
 const s3Client = new S3Client({
@@ -102,5 +95,23 @@ router.put("/:trainerName", upload.single("file"), async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
+// トレーナーを削除
+router.delete("/:trainerName", async (req, res) => {
+  const { trainerName } = req.params;
+  const fileName = `trainers/${trainerName}.json`;
+
+  try {
+    await s3Client.send(new DeleteObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: fileName
+    }));
+    res.send(`Trainer ${trainerName} deleted successfully`);
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).send(err.message);
+  }
+});
+
 
 module.exports = router;

@@ -44,4 +44,15 @@ const fetchTrainerInfo = async (trainerName) => {
   }
 };
 
-export { getTrainers, createTrainer, updateTrainer, fetchTrainerInfo };
+const deleteTrainer = async (trainerName) => {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/api/trainers/${trainerName}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting trainer:", error);
+    throw error;
+  }
+};
+
+
+export { getTrainers, createTrainer, updateTrainer, fetchTrainerInfo, deleteTrainer };

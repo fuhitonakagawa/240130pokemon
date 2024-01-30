@@ -1,6 +1,11 @@
 <template>
   <div class="pokemon-catch-page q-pa-md">
     <h4>ポケモンゲット</h4>
+    <q-btn
+    label="トレーナー情報に戻る"
+    @click="goToInfoPage"
+    color="primary"
+  />
     <q-pagination
       v-model="currentPage"
       :max="maxPages"
@@ -122,6 +127,9 @@ export default {
       this.isLoading = true;
       this.pokemons = await getPokemons(page, this.limit);
       this.isLoading = false;
+    },
+    goToInfoPage() {
+      this.$router.push({ name: 'TrainerInfoPage' });
     },
   },
 };

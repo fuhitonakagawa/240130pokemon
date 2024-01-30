@@ -53,6 +53,9 @@ export default {
       this.msgBoxMessage = message;
       this.showMsgBox = true;
     },
+    goToStartPage() {
+      this.$router.push({ name: "StartPage" });
+    },
   },
 };
 </script>

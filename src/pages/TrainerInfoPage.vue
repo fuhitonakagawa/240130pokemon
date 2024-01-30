@@ -1,6 +1,7 @@
 <template>
   <h4>トレーナー情報画面</h4>
   <div class="trainer-info-page q-pa-md">
+    <q-btn label="トップページに戻る" @click="goToStartPage" color="primary" />
     <q-btn color="primary" @click="goToPokemonCatchPage">ポケモンゲット</q-btn>
     <q-card v-if="trainer">
       <q-card-section>
@@ -147,6 +148,9 @@ export default {
     },
     goToPokemonCatchPage() {
       this.$router.push({ name: "PokemonCatchPage" });
+    },
+    goToStartPage() {
+      this.$router.push({ name: "StartPage" });
     },
   },
 };
