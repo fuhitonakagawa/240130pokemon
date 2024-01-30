@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-const VUE_APP_API_BASE_URL= "http://localhost:3000"
-const API_BASE_URL = VUE_APP_API_BASE_URL;
+// const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
+// const API_BASE_URL = VUE_APP_API_BASE_URL;
+const API_BASE_URL ="http://localhost:3000";
 
 const getTrainers = async () => {
   try {

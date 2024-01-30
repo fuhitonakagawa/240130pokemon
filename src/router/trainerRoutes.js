@@ -9,6 +9,8 @@ const {
 } = require("@aws-sdk/client-s3");
 const express = require("express");
 const multer = require("multer");
+const { ProxyAgent }  = require("proxy-agent");
+const { NodeHttpHandler } = require("@aws-sdk/node-http-handler");
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -16,7 +18,19 @@ const upload = multer({ storage: multer.memoryStorage() });
 const AWS_REGION = "ap-northeast-1";
 const BUCKET_NAME = "ppppppppppppppppokemon"; // トレーナー情報を保存するバケット名
 
-const s3Client = new S3Client({ region: AWS_REGION});
+// S3Clientの初期化
+// const s3Client = new S3Client({ 
+//   region: AWS_REGION,
+// });
+
+const agent = new ProxyAgent();
+const s3Client = new S3Client({
+  region: AWS_REGION,
+  requestHandler: new NodeHttpHandler({
+    httpAgent: agent,
+    httpsAgent: agent,
+  }),
+});
 
 // トレーナーのファイルリストを取得
 router.get("/", async (req, res) => {

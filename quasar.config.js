@@ -10,10 +10,7 @@
 
 const { configure } = require('quasar/wrappers');
 
-const DotEnv = require('dotenv');
-const webpack = require('webpack');
-
-DotEnv.config();
+require('dotenv').config();
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -62,23 +59,14 @@ module.exports = configure(function (/* ctx */) {
         browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
         node: 'node20'
       },
+      env: {
+        API_BASE_URL: process.env.VUE_APP_API_BASE_URL
+      },
 
       vueRouterMode: 'hash', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
-
-      // Webpackの拡張設定
-      extendWebpack (cfg) {
-        cfg.plugins.push(
-          new webpack.DefinePlugin({
-            'process.env': {
-              AWS_ACCESS_KEY_ID: JSON.stringify(process.env.AWS_ACCESS_KEY_ID),
-              AWS_SECRET_ACCESS_KEY: JSON.stringify(process.env.AWS_SECRET_ACCESS_KEY)
-            }
-          })
-        );
-      },
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
