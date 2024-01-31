@@ -181,22 +181,6 @@ export default {
       return getSkillsForType(pokemonType);
     },
 
-    // gameLoop() {
-    //   switch (this.gameState.currentPhase) {
-    //     case GamePhase.PLAYER_TURN:
-    //       this.handlePlayerTurn();
-    //       break;
-    //     case GamePhase.ENEMY_TURN:
-    //       this.handleEnemyTurn();
-    //       break;
-    //     case GamePhase.END_GAME:
-    //       // 勝敗判定処理
-    //       this.checkWinner();
-    //       break;
-    //   }
-    //   requestAnimationFrame(this.gameLoop);
-    // },
-
     async handlePlayerTurn() {
       // 自分のHPが0以下なら勝敗判定フェーズへ
       if (this.playerPokemon.currentHp <= 0) {
@@ -210,7 +194,8 @@ export default {
         this.gameState.currentPhase = GamePhase.ENEMY_TURN;
         return;
       } else if (this.playerPokemon.isConfusing) {
-        this.battleMessage = `${this.playerPokemon.name} は 混乱している！`;
+        this.battleMessage = `${this.playerPokemon.name} は 混乱して自分を攻撃した！`;
+        this.playerPokemon.currentHp -= 20;
         this.playerPokemon.isConfusing = false;
         this.gameState.currentPhase = GamePhase.ENEMY_TURN;
         return;
@@ -267,9 +252,15 @@ export default {
       if (Math.random() * 100 < skill.successRate) {
         switch (skill.effect) {
           case "attack":
-            target.currentHp -= skill.power;
-            msg = `${target.name} に ${skill.power} ダメージ！`;
-            this.battleMessage = msg;
+            if (target.isDefencing){
+              msg = `${target.name} は ぼうぎょ している！`;
+              this.battleMessage = msg;
+              target.isDefencing = false;
+            } else {
+              target.currentHp -= skill.power;
+              msg = `${target.name} に ${skill.power} ダメージ！`;
+              this.battleMessage = msg;
+            }
             break;
           case "recovery":
             user.currentHp = Math.min(user.currentHp + skill.power, user.maxHp);
@@ -310,7 +301,8 @@ export default {
         this.gameState.currentPhase = GamePhase.PLAYER_TURN;
         return;
       } else if (this.opponentPokemon.isConfusing) {
-        this.battleMessage = `${this.opponentPokemon.name} は 混乱している！`;
+        this.battleMessage = `${this.opponentPokemon.name} は 混乱して自分を攻撃した！`;
+        this.opponentPokemon.currentHp -= 20;
         this.opponentPokemon.isConfusing = false;
         this.gameState.currentPhase = GamePhase.PLAYER_TURN;
         return;
