@@ -26,6 +26,13 @@
         </q-card-actions>
       </q-card>
     </div>
+    <confirm-dialog
+      :model-value="showDialog"
+      title="削除確認"
+      message="このトレーナーを削除してもよろしいですか？"
+      @confirm="confirmDeleteTrainer"
+      @update:modelValue="showDialog = $event"
+    />
   </div>
 </template>
 
@@ -53,11 +60,17 @@ import {
   deleteTrainer,
   fetchTrainerInfo,
 } from "../services/trainerService";
+import ConfirmDialog from "src/components/ConfirmDialog.vue";
 
 export default {
+  components: {
+    ConfirmDialog,
+  },
   data() {
     return {
       trainers: [], // トレーナーリスト
+      showDialog: false, // 確認ダイアログの表示フラグ
+      currentTrainerName: null, // 確認ダイアログで選択されたトレーナー名
     };
   },
   async created() {
@@ -80,16 +93,23 @@ export default {
       console.error("トレーナー情報の取得に失敗しました", error);
     }
   },
-
   methods: {
     selectTrainer(trainerName) {
       this.$router.push({ name: "TrainerInfoPage", params: { trainerName } });
     },
-    async deleteTrainer(trainerName) {
+    deleteTrainer(trainerName) {
+      this.currentTrainerName = trainerName; // 削除するトレーナー名をセット
+      this.showDialog = true; // 確認ダイアログを表示
+    },
+    async confirmDeleteTrainer() {
       try {
-        await deleteTrainer(trainerName);
-        this.trainers = this.trainers.filter((t) => t !== trainerName);
-        window.location.reload();
+        await deleteTrainer(this.currentTrainerName); // 確認後に削除
+        this.trainers = this.trainers.filter(
+          (trainer) => trainer.name !== this.currentTrainerName
+        );
+        this.showDialog = false; // ダイアログを閉じる
+        this.currentTrainerName = null; // 現在選択されているトレーナー名をリセット
+        // ここでリロードする代わりにVueのリアクティブシステムを利用する
       } catch (error) {
         console.error("Failed to delete trainer:", error);
       }

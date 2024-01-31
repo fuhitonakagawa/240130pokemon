@@ -37,12 +37,26 @@
               color="negative"
               @click="removePokemon(pokemon.name)"
             />
+            <q-btn
+              label="バトル"
+              color="positive"
+              @click="goToBattle(pokemon)"
+            />
           </div>
         </div>
         <div v-else>ポケモンを持っていません。</div>
       </q-card-section>
     </q-card>
   </div>
+  <!-- <div>
+    <confirm-dialog
+      :model-value="showDialog"
+      title="削除確認"
+      message="このポケモンを削除してもよろしいですか？"
+      @confirm="confirmRemovePokemon"
+      @update:modelValue="showDialog = $event"
+    />
+  </div> -->
 </template>
 
 <style>
@@ -51,7 +65,6 @@
   flex-wrap: wrap;
   justify-content: center;
 }
-
 .pokemon-item {
   flex: 1 1 300px;
   margin: 10px;
@@ -67,12 +80,19 @@
 <script>
 import { fetchTrainerInfo, updateTrainer } from "../services/trainerService";
 import { getPokemonInfo } from "../services/pokemonService";
+// import ConfirmDialog from "src/components/ConfirmDialog.vue";
+
 
 export default {
+  // components: {
+  //   ConfirmDialog,
+  // },
   data() {
     return {
       trainer: null,
       tempNicknames: [], // 一時的なニックネームを保持するオブジェクト
+      // showDialog: false,
+      // currentPokemonName: null, // 確認ダイアログで選択されたポケモン名
     };
   },
   async created() {
@@ -100,7 +120,6 @@ export default {
         console.error("Error:", error);
       }
     },
-
     async saveNickname(pokemon, index) {
       try {
         const newNickname = this.tempNicknames[index];
@@ -151,6 +170,12 @@ export default {
     },
     goToStartPage() {
       this.$router.push({ name: "StartPage" });
+    },
+    goToBattle(pokemonName) {
+      this.$router.push({
+        name: "BattlePage",
+        params: { trainerName: this.trainerName, pokemonName: pokemonName.name, pokemonNickname: pokemonName.nickname},
+      });
     },
   },
 };

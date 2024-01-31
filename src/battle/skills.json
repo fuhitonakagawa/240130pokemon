@@ -1,0 +1,32 @@
+{
+  "FireTypeSkills": [
+    {
+      "name": "Flame Burst",
+      "category": "Attack",
+      "power": 70,
+      "effect": null,
+      "successRate": null
+    },
+    {
+      "name": "Fire Shield",
+      "category": "Defense",
+      "power": null,
+      "effect": null,
+      "successRate": null
+    },
+    {
+      "name": "Healing Warmth",
+      "category": "Recovery",
+      "power": 50,
+      "effect": null,
+      "successRate": null
+    },
+    {
+      "name": "Blazing Inferno",
+      "category": "Special",
+      "power": 90,
+      "effect": "Burn",
+      "successRate": 50
+    }
+  ],
+}

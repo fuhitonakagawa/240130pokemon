@@ -6,7 +6,8 @@
         <p>{{ message }}</p>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn flat label="閉じる" color="primary" @click="close" />
+        <q-btn flat label="いいえ" color="primary" @click="decline" />
+        <q-btn flat label="はい" color="negative" @click="accept" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -30,6 +31,13 @@ export default {
     },
   },
   methods: {
+    accept() {
+      this.$emit("confirm");
+      this.close();
+    },
+    decline() {
+      this.close();
+    },
     close() {
       this.$emit("update:modelValue", false);
     },
