@@ -1,6 +1,10 @@
 <template>
   <div>
     <h4>Battle Screen</h4>
+    <q-btn label="トレーナー情報に戻る" @click="goToInfoPage" color="primary" />
+    <div class="message-box">
+      <h5>{{ battleMessage }}</h5>
+    </div>
     <div class="battle-page">
       <!-- Opponent's Pokémon -->
       <div class="opponent-pokemon">
@@ -28,7 +32,7 @@
           <div class="hp-bar" :style="{ width: playerHpWidth }" />
           <span>{{ playerPokemon.currentHp }} / {{ playerPokemon.maxHp }}</span>
         </div>
-        <div class="skills">
+        <div class="skills" v-show="isButtonVisible">
           <button
             v-for="skill in playerSkills"
             :key="skill.name"
@@ -38,16 +42,9 @@
           </button>
         </div>
       </div>
-      <h4>相手スキル{{ opponentSkills }}</h4>
-      <h4>自分スキル：{{ playerSkills }}</h4>
-      <div class="message-box">
-        <h5>{{ battleMessage }}</h5>
-      </div>
+      <!-- <h4>相手スキル{{ opponentSkills }}</h4>
+      <h4>自分スキル：{{ playerSkills }}</h4> -->
     </div>
-
-    <!-- Display Pokémon and HP -->
-    <!-- Skill buttons -->
-    <!-- Victory/Defeat message -->
   </div>
 </template>
 
@@ -103,11 +100,16 @@ export default {
       playerSkills: [],
       opponentSkills: [],
       gameState: {
-      currentPhase: GamePhase.PLAYER_TURN, // ゲームの初期フェーズをプレイヤーターンに設定
-    },
+        currentPhase: null
+      },
+      isButtonVisible: false,
+      currentStep: 0,
     };
   },
   methods: {
+    goToInfoPage() {
+      this.$router.push({ name: "TrainerInfoPage" });
+    },
     // Battle methods
     async getPokemonInfo(pokemonName) {
       try {
@@ -138,36 +140,183 @@ export default {
     async loadPokemonSkills(pokemonType) {
       return getSkillsForType(pokemonType);
     },
-    gameLoop() {
-      switch (gameState.currentPhase) {
-        case GamePhase.PLAYER_TURN:
-          // プレイヤーが技を選択するまで待機する処理
+
+    // gameLoop() {
+    //   switch (this.gameState.currentPhase) {
+    //     case GamePhase.PLAYER_TURN:
+    //       this.handlePlayerTurn();
+    //       break;
+    //     case GamePhase.ENEMY_TURN:
+    //       this.handleEnemyTurn();
+    //       break;
+    //     case GamePhase.END_GAME:
+    //       // 勝敗判定処理
+    //       this.checkWinner();
+    //       break;
+    //   }
+    //   requestAnimationFrame(this.gameLoop);
+    // },
+
+    async handlePlayerTurn() {
+      // 自分のHPが0以下なら勝敗判定フェーズへ
+      if (this.playerPokemon.currentHp <= 0) {
+        this.gameState.currentPhase = GamePhase.END_GAME;
+        return;
+      }
+
+      if (this.playerPokemon.isSleeping) {
+        this.battleMessage = `${this.playerPokemon.name} は 眠っている！`;
+        this.playerPokemon.isSleeping = false;
+        this.gameState.currentPhase = GamePhase.ENEMY_TURN;
+        return;
+      } else if (this.playerPokemon.isConfusing) {
+        this.battleMessage = `${this.playerPokemon.name} は 混乱している！`;
+        this.playerPokemon.isConfusing = false;
+        this.gameState.currentPhase = GamePhase.ENEMY_TURN;
+        return;
+      } else {
+        this.battleMessage = "わざを選択してください";
+        this.isButtonVisible = true;
+      }
+    },
+
+    async useSkill(skill) {
+      // 技の使用メッセージを表示
+      const msg = `${this.playerPokemon.name} は ${skill.name} を使用！`;
+      this.battleMessage = msg;
+      console.log(msg);
+      this.isButtonVisible = false; // ボタンを非表示にする
+      await this.wait(1000);
+
+      this.applySkillEffect(this.playerPokemon, this.opponentPokemon, skill);
+      await this.wait(1000);
+
+      // 技の効果適用後にフェーズを更新
+      this.gameState.currentPhase = GamePhase.ENEMY_TURN;
+      console.log(this.gameState.currentPhase);
+      return;
+    },
+
+    applySkillEffect(user, target, skill) {
+      let msg;
+      switch (skill.category) {
+        case "Attack":
+          target.currentHp -= skill.power;
+          msg = `${target.name} に ${skill.power} ダメージ！`;
+          this.battleMessage = msg;
           break;
-        case GamePhase.ENEMY_TURN:
-          handleEnemyTurn();
+        case "Defense":
+          user.isDefencing = true;
+          msg = `${user.name} は ぼうぎょ している！`;
+          this.battleMessage = msg;
           break;
-        case GamePhase.PROCESS_ACTION:
-          processAction();
+        case "Recovery":
+          user.currentHp = Math.min(user.currentHp + skill.power, user.maxHp);
+          msg = `${user.name} の HP が ${skill.power} かいふく した！`;
+          this.battleMessage = msg;
           break;
-        case GamePhase.CHECK_HP:
-          checkHp();
-          break;
-        case GamePhase.END_GAME:
-          // ゲーム終了処理
+        case "Special":
+          this.applySpecialEffect(user, target, skill);
           break;
       }
-      requestAnimationFrame(gameLoop);
+      console.log(msg);
     },
-    useSkill(skill) {
-    // 技を使用した際の処理
-    this.battleMessage = `プレイヤーは ${skill.name} を使用！`;
-    // 技の効果を適用する処理
-    // ...
 
-    // 敵のターンに移行
-    this.gameState.currentPhase = GamePhase.ENEMY_TURN;
+    applySpecialEffect(user, target, skill) {
+      let msg;
+      if (Math.random() * 100 < skill.successRate) {
+        switch (skill.effect) {
+          case "attack":
+            target.currentHp -= skill.power;
+            msg = `${target.name} に ${skill.power} ダメージ！`;
+            this.battleMessage = msg;
+            break;
+          case "recovery":
+            user.currentHp = Math.min(user.currentHp + skill.power, user.maxHp);
+            msg = `${user.name} の HP が ${skill.power} かいふく した！`;
+            this.battleMessage = msg;
+            break;
+          case "sleep":
+            target.isSleeping = true;
+            msg = `${target.name} は眠った！`;
+            this.battleMessage = msg;
+            break;
+          case "confuse":
+            target.isConfusing = true;
+            msg = `${target.name} は混乱した！`;
+            this.battleMessage = msg;
+            break;
+        }
+      } else {
+        msg = `わざは失敗した！`;
+        this.battleMessage = msg;
+      }
+      console.log(msg);
+    },
+
+    async handleEnemyTurn() {
+      let randomSkill;
+      console.log("handleEnemyTurn");
+
+      // 敵のHPが0以下なら勝敗判定フェーズへ
+      if (this.opponentPokemon.currentHp <= 0) {
+        this.gameState.currentPhase = GamePhase.END_GAME;
+        return;
+      }
+
+      if (this.opponentPokemon.isSleeping) {
+        this.battleMessage = `${this.opponentPokemon.name} は 眠っている！`;
+        this.opponentPokemon.isSleeping = false;
+        this.gameState.currentPhase = GamePhase.PLAYER_TURN;
+        return;
+      } else if (this.opponentPokemon.isConfusing) {
+        this.battleMessage = `${this.opponentPokemon.name} は 混乱している！`;
+        this.opponentPokemon.isConfusing = false;
+        this.gameState.currentPhase = GamePhase.PLAYER_TURN;
+        return;
+      } else {
+        // 敵の技をランダムに選択
+        randomSkill =
+          this.opponentSkills[
+            Math.floor(Math.random() * this.opponentSkills.length)
+          ];
+        this.battleMessage = `${this.opponentPokemon.name} は ${randomSkill.name} を使用！`;
+      }
+
+      console.log("てきのわざ", randomSkill);
+      await this.wait(1000);
+
+      this.applySkillEffect(
+        this.opponentPokemon,
+        this.playerPokemon,
+        randomSkill
+      );
+      console.log("てきのわざEffected");
+
+      await this.wait(1000);
+      this.gameState.currentPhase = GamePhase.PLAYER_TURN;
+      return;
+    },
+
+    wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    },
+
+    checkWinner() {
+      console.log("checkWinner");
+
+      if (this.playerPokemon.currentHp <= 0) {
+        this.battleMessage = `${this.playerPokemon.name} は たおれた！`;
+        this.gameState.currentPhase = GamePhase.END_GAME;
+        return;
+      } else if (this.opponentPokemon.currentHp <= 0) {
+        this.battleMessage = `${this.opponentPokemon.name} は たおれた！`;
+        this.gameState.currentPhase = GamePhase.END_GAME;
+        return;
+      }
+    },
   },
-  },
+
   async created() {
     // Initialize battle
     // Set player's Pokémon name from route params and fetch its info
@@ -199,7 +348,8 @@ export default {
     this.playerPokemon.currentHp = this.playerPokemon.maxHp;
     this.opponentPokemon.currentHp = this.opponentPokemon.maxHp;
 
-    requestAnimationFrame(this.gameLoop);
+    // requestAnimationFrame(this.gameLoop);
+    this.gameState.currentPhase = GamePhase.PLAYER_TURN;
   },
   computed: {
     playerHpWidth() {
@@ -214,5 +364,17 @@ export default {
       );
     },
   },
+  watch: {
+  'gameState.currentPhase': function(newPhase, oldPhase) {
+    // currentPhaseが変更されたときに実行される処理
+    if (newPhase === GamePhase.PLAYER_TURN) {
+      this.handlePlayerTurn();
+    } else if (newPhase === GamePhase.ENEMY_TURN) {
+      this.handleEnemyTurn();
+    } else if (newPhase === GamePhase.END_GAME) {
+      this.checkWinner();
+    }
+  }
+},
 };
 </script>
