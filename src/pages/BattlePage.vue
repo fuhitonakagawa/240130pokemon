@@ -16,10 +16,10 @@
         />
         <!-- Opponent's Pokémon HP Bar -->
         <div class="pokemon-hp">
-          <div class="hp-bar" :style="{ width: opponentHpWidth }" />
           <span
             >{{ opponentPokemon.currentHp }} / {{ opponentPokemon.maxHp }}</span
           >
+          <div class="hp-bar" :style="{ width: opponentHpWidth }" />
         </div>
       </div>
       <!-- Player's Pokémon -->
@@ -29,14 +29,16 @@
         <img :src="playerPokemon.backImage" alt="Back of player's Pokémon" />
         <!-- Player's Pokémon HP Bar -->
         <div class="pokemon-hp">
-          <div class="hp-bar" :style="{ width: playerHpWidth }" />
           <span>{{ playerPokemon.currentHp }} / {{ playerPokemon.maxHp }}</span>
+          <div class="hp-bar-background" />
+          <div class="hp-bar" :style="{ width: playerHpWidth }" />
         </div>
         <div class="skills" v-show="isButtonVisible">
           <button
             v-for="skill in playerSkills"
             :key="skill.name"
             @click="useSkill(skill)"
+            class="skill-button"
           >
             {{ skill.name }}
           </button>
@@ -59,13 +61,51 @@
 .pokemon-hp {
   display: flex;
   align-items: center;
+  width: 100%;
+  background-color: #ccc; /* グレーの背景バー */
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.hp-bar-background {
+  background-color: #ccc;
+  width: 100%;
+  height: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .hp-bar {
-  background-color: green;
+  background-color: rgb(9, 133, 9);
   height: 10px;
   border-radius: 5px;
   transition: width 0.5s ease;
+}
+
+.skill-button {
+  background-color: #4caf50; /* ボタンの背景色 */
+  color: white; /* テキスト色 */
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+  box-shadow: 0 4px #999;
+}
+
+.skill-button:hover {
+  background-color: #45a049;
+}
+
+.skill-button:active {
+  background-color: #45a049;
+  box-shadow: 0 2px #666;
+  transform: translateY(2px);
 }
 </style>
 
@@ -100,7 +140,7 @@ export default {
       playerSkills: [],
       opponentSkills: [],
       gameState: {
-        currentPhase: null
+        currentPhase: null,
       },
       isButtonVisible: false,
       currentStep: 0,
@@ -365,16 +405,16 @@ export default {
     },
   },
   watch: {
-  'gameState.currentPhase': function(newPhase, oldPhase) {
-    // currentPhaseが変更されたときに実行される処理
-    if (newPhase === GamePhase.PLAYER_TURN) {
-      this.handlePlayerTurn();
-    } else if (newPhase === GamePhase.ENEMY_TURN) {
-      this.handleEnemyTurn();
-    } else if (newPhase === GamePhase.END_GAME) {
-      this.checkWinner();
-    }
-  }
-},
+    "gameState.currentPhase": function (newPhase, oldPhase) {
+      // currentPhaseが変更されたときに実行される処理
+      if (newPhase === GamePhase.PLAYER_TURN) {
+        this.handlePlayerTurn();
+      } else if (newPhase === GamePhase.ENEMY_TURN) {
+        this.handleEnemyTurn();
+      } else if (newPhase === GamePhase.END_GAME) {
+        this.checkWinner();
+      }
+    },
+  },
 };
 </script>
