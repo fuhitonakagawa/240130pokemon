@@ -2,9 +2,9 @@ const getSkillsForType = (type) => {
   const skills = {
     NormalTypeSkills: [
       {
-        name: "あばれる",
+        name: "あばれる（全体）",
         category: "Attack",
-        power: 80,
+        power: 70,
         effect: null,
         successRate: null,
         isAoe: true,
@@ -33,15 +33,15 @@ const getSkillsForType = (type) => {
     ],
     FighitingTypeSkills: [
       {
-        name: "ばくれつパンチ",
+        name: "ばくれつパンチ（全体）",
         category: "Attack",
-        power: 90,
+        power: 80,
         effect: null,
         successRate: null,
         isAoe: true,
       },
       {
-        name: "いのちがけ",
+        name: "いのちがけ（全体）",
         category: "Special",
         power: 140,
         effect: null,
@@ -72,9 +72,9 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "おいかぜ",
+        name: "おいかぜ（全体）",
         category: "Recovery",
-        power: 100,
+        power: 60,
         effect: null,
         successRate: null,
         isAoe: true,
@@ -103,7 +103,7 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "スモッグ",
+        name: "スモッグ（全体）",
         category: "Special",
         power: null,
         effect: "sleep",
@@ -118,21 +118,21 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "ようかいえき",
+        name: "ようかいえき（全体）",
         category: "Special",
-        power: 140,
+        power: 80,
         effect: "attack",
-        successRate: 80,
+        successRate: 60,
         isAoe: true,
       },
     ],    
     GroundTypeSkills: [
       {
-        name: "マグニチュード",
+        name: "マグニチュード（全体）",
         category: "Special",
         power: 140,
         effect: null,
-        successRate: 70,
+        successRate: 40,
         isAoe: true,
       },
       {
@@ -150,11 +150,11 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "グランドフォース",
+        name: "グランドフォース（全体）",
         category: "Special",
         power: 150,
         effect: "recovery",
-        successRate: 70,
+        successRate: 60,
         isAoe: true,
       },
     ],    
@@ -167,11 +167,11 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "メテオビーム",
+        name: "メテオビーム（全体）",
         category: "Special",
-        power: 130,
+        power: 110,
         effect: "attack",
-        successRate: 80,
+        successRate: 50,
         isAoe: true,
       },
       {
@@ -191,7 +191,7 @@ const getSkillsForType = (type) => {
     ],    
     BugTypeSkills: [
       {
-        name: "まとわりつく",
+        name: "まとわりつく（全体）",
         category: "Special",
         power: null,
         effect: "confuse",
@@ -230,11 +230,11 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "シャドーボール",
+        name: "シャドーボール（全体）",
         category: "Special",
-        power: 140,
+        power: 90,
         effect: "attack",
-        successRate: 70,
+        successRate: 40,
         isAoe: true,
       },
       {
@@ -268,7 +268,7 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "はめつのねがい",
+        name: "はめつのねがい（全体）",
         category: "Special",
         power: null,
         effect: "sleep",
@@ -285,9 +285,9 @@ const getSkillsForType = (type) => {
     ],    
     FireTypeSkills: [
       {
-        name: "かえんほうしゃ",
+        name: "かえんほうしゃ（全体）",
         category: "Attack",
-        power: 100,
+        power: 80,
         effect: null,
         successRate: null,
         isAoe: true,
@@ -316,9 +316,9 @@ const getSkillsForType = (type) => {
     ],    
     WaterTypeSkills: [
       {
-        name: "ハイドロポンプ",
+        name: "ハイドロポンプ（全体）",
         category: "Attack",
-        power: 100,
+        power: 70,
         effect: null,
         successRate: null,
         isAoe: true,
@@ -368,7 +368,7 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "このは",
+        name: "このは（全体）",
         category: "Special",
         power: null,
         effect: "sleep",
@@ -385,11 +385,11 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "10まんボルド",
+        name: "10まんボルド（全体）",
         category: "Special",
-        power: 140,
+        power: 100,
         effect: "attack",
-        successRate: 70,
+        successRate: 60,
         isAoe: true,
       },
       {
@@ -409,10 +409,10 @@ const getSkillsForType = (type) => {
     ],
     PsychicTypeSkills: [
       {
-        name: "ひかりのかべ",
+        name: "ひかりのかべ（全体）",
         category: "Recovery",
-        power: null,
-        effect: 100,
+        power: 100,
+        effect: null,
         successRate: null,
         isAoe: true,
       },
@@ -447,7 +447,7 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "こごえるかぜ",
+        name: "こごえるかぜ（全体）",
         category: "Special",
         power: null,
         effect: "sleep",
@@ -485,11 +485,11 @@ const getSkillsForType = (type) => {
         successRate: 70,
       },
       {
-        name: "りゅうせいぐん",
+        name: "りゅうせいぐん（全体）",
         category: "Special",
         power: 140,
         effect: "attack",
-        successRate: 70,
+        successRate: 40,
         isAoe: true,
       },
       {
@@ -509,7 +509,7 @@ const getSkillsForType = (type) => {
         successRate: null,
       },
       {
-        name: "うそなき",
+        name: "うそなき（全体）",
         category: "Special",
         power: null,
         effect: "confuse",
