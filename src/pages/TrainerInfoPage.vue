@@ -8,50 +8,57 @@
       <q-spinner color="primary" size="50px" />
     </div>
     <div v-else>
-    <q-card v-if="trainer">
-      <q-card-section>
-        <div class="text-h6">{{ trainer.name }}</div>
-        <div
-          v-if="trainer.pokemons && trainer.pokemons.length > 0"
-          class="pokemon-container"
-        >
-          <div
-            v-for="(pokemon, index) in trainer.pokemons"
-            :key="pokemon.name"
-            class="pokemon-item"
-          >
-            <q-img
-              :src="pokemon.image"
-              :alt="pokemon.name"
-              class="pokemon-image"
-            />
-            <div>
-              <h3>{{ pokemon.nickname || pokemon.name }}</h3>
-            </div>
-            <q-input
-              filled
-              v-model="tempNicknames[index]"
-              label="ニックネーム"
-            />
+      <q-card v-if="trainer">
+        <q-card-section>
+          <div class="text-h6">{{ trainer.name }}</div>
+          <div>
             <q-btn
-              label="ニックネーム保存"
-              @click="saveNickname(pokemon, index)"
-            />
-            <q-btn
-              label="削除"
-              color="negative"
-              @click="removePokemon(pokemon.name)"
-            />
-            <q-btn
-              label="バトル"
+              label="ポケモンチームバトル"
               color="positive"
-              @click="goToBattle(pokemon)"
+              @click="goToTeamBattle(trainer.pokemons)"
             />
           </div>
-        </div>
-        <div v-else>ポケモンを持っていません。</div>
-      </q-card-section>
-    </q-card>
+          <div
+            v-if="trainer.pokemons && trainer.pokemons.length > 0"
+            class="pokemon-container"
+          >
+            <div
+              v-for="(pokemon, index) in trainer.pokemons"
+              :key="pokemon.name"
+              class="pokemon-item"
+            >
+              <q-img
+                :src="pokemon.image"
+                :alt="pokemon.name"
+                class="pokemon-image"
+              />
+              <div>
+                <h3>{{ pokemon.nickname || pokemon.name }}</h3>
+              </div>
+              <q-input
+                filled
+                v-model="tempNicknames[index]"
+                label="ニックネーム"
+              />
+              <q-btn
+                label="ニックネーム保存"
+                @click="saveNickname(pokemon, index)"
+              />
+              <q-btn
+                label="削除"
+                color="negative"
+                @click="removePokemon(pokemon.name)"
+              />
+              <q-btn
+                label="1on1バトル"
+                color="positive"
+                @click="goToBattle(pokemon)"
+              />
+            </div>
+          </div>
+          <div v-else>ポケモンを持っていません。</div>
+        </q-card-section>
+      </q-card>
     </div>
   </div>
   <!-- <div>
@@ -87,7 +94,6 @@
 import { fetchTrainerInfo, updateTrainer } from "../services/trainerService";
 import { getPokemonInfo } from "../services/pokemonService";
 // import ConfirmDialog from "src/components/ConfirmDialog.vue";
-
 
 export default {
   // components: {
@@ -182,7 +188,18 @@ export default {
     goToBattle(pokemonName) {
       this.$router.push({
         name: "BattlePage",
-        params: { trainerName: this.trainerName, pokemonName: pokemonName.name, pokemonNickname: pokemonName.nickname},
+        params: {
+          trainerName: this.trainerName,
+          pokemonName: pokemonName.name,
+          pokemonNickname: pokemonName.nickname,
+        },
+      });
+    },
+    goToTeamBattle(pokemons) {
+      const pokemonNames = pokemons.map((pokemon) => pokemon.name); // ポケモンの名前のリストを取得
+      this.$router.push({
+        name: "TeamBattle",
+        query: { pokemonNames: JSON.stringify(pokemonNames) }, // クエリパラメータとして渡す
       });
     },
   },

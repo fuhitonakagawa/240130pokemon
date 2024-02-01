@@ -4,6 +4,7 @@ import TrainerCreationPage from '../pages/TrainerCreationPage.vue';
 import TrainerInfoPage from '../pages/TrainerInfoPage.vue';
 import PokemonCatchPage from '../pages/PokemonCatchPage.vue';
 import BattlePage from '../pages/BattlePage.vue';
+import TemaBattle from '../pages/TeamBattle.vue';
 
 const routes = [
   {
@@ -35,6 +36,12 @@ const routes = [
     path: '/battle/:trainerName/:pokemonName',
     name: 'BattlePage',
     component: BattlePage,
+    props: true
+  },
+  {
+    path: '/battle/:trainerName/team',
+    name: 'TeamBattle',
+    component: TemaBattle,
     props: true
   },
 ];
