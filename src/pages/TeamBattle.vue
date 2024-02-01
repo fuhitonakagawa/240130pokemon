@@ -62,7 +62,7 @@
                   (!selectedSkills[pokemon.name] ||
                     selectedSkills[pokemon.name].name === skill.name)
                 "
-                class="skill-button"
+                :class="['skill-button']"
               >
                 {{ skill.name }}
               </button>
@@ -328,7 +328,7 @@ export default {
       // 行動順に沿って技の効果を実行
       for (const pokemon of actionOrder) {
         if (!pokemon.isAlive) {
-          return;
+          continue;
         }
         if (pokemon.isSleeping) {
           this.battleMessage = `${pokemon.name} は眠っている！\n`;
@@ -366,13 +366,6 @@ export default {
         );
 
         // HPが0以下のポケモンのisAliveフラグを更新し、倒れたメッセージを表示
-        // [...this.playerTeam, ...this.opponentTeam].forEach((p) => {
-        //   if (p.currentHp <= 0 && p.isAlive) {
-        //     p.isAlive = false;
-        //     this.battleMessage = `${p.name} は倒れた！\n`;
-        //     await this.wait(1000);
-        //   }
-        // });
         for (const p of [...this.playerTeam, ...this.opponentTeam]) {
           if (p.currentHp <= 0 && p.isAlive) {
             p.isAlive = false;
@@ -382,6 +375,9 @@ export default {
         }
 
         this.activePokemonName = ""; // アクティブなポケモンをリセット
+
+        console.log(this.playerTeam);
+        console.log(this.opponentTeam);
 
         // チームメンバが全て倒れたら、ゲーム終了
         if (
@@ -401,9 +397,7 @@ export default {
       });
 
       // 全ての行動が完了した後、次のフェーズへ移行
-      if (this.gameState.currentPhase !== GamePhase.END_GAME) {
-        this.gameState.currentPhase = GamePhase.SELECT_SKILL; // 次のターンへ
-      }
+      this.gameState.currentPhase = GamePhase.SELECT_SKILL; // 次のターンへ
     },
 
     async applySkillEffect(user, userTeam, targetTeam, skill) {
