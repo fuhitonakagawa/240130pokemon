@@ -9,10 +9,10 @@
       <!-- Opponent's Pokémon -->
       <div class="opponent-pokemon">
         <h3>{{ opponentPokemon.name }}</h3>
-        <!-- <h4>{{ opponentPokemon.type }}</h4> -->
         <img
           :src="opponentPokemon.frontImage"
           alt="Front of opponent's Pokémon"
+          class ="img"
         />
         <!-- Opponent's Pokémon HP Bar -->
         <div class="pokemon-hp">
@@ -25,8 +25,7 @@
       <!-- Player's Pokémon -->
       <div class="player-pokemon">
         <h3>{{ playerPokemon.name }}</h3>
-        <!-- <h4>{{ playerPokemon.type }}</h4> -->
-        <img :src="playerPokemon.backImage" alt="Back of player's Pokémon" />
+        <img :src="playerPokemon.backImage" alt="Back of player's Pokémon" class="img" />
         <!-- Player's Pokémon HP Bar -->
         <div class="pokemon-hp">
           <span>{{ playerPokemon.currentHp }} / {{ playerPokemon.maxHp }}</span>
@@ -51,6 +50,20 @@
 </template>
 
 <style>
+
+.battle-page {
+  display: flex;
+  justify-content: space-between;
+}
+.player-pokemon, .opponent-pokemon {
+  width: 45%
+}
+
+.img {
+  width: 200px;
+  height: 200px;
+}
+
 .message-box {
   border: 1px solid #ccc;
   padding: 10px;
@@ -121,8 +134,8 @@ export default {
       battleMessage: "",
       playerPokemon: {
         name: "",
-        maxHp: 100,
-        currentHp: 100,
+        maxHp: 200,
+        currentHp: 200,
         backImage: "",
         isDefencing: false,
         isSleeping: false,
@@ -130,8 +143,8 @@ export default {
       },
       opponentPokemon: {
         name: "",
-        maxHp: 100,
-        currentHp: 100,
+        maxHp: 200,
+        currentHp: 200,
         frontImage: "",
         isDefencing: false,
         isSleeping: false,
@@ -226,13 +239,19 @@ export default {
       let msg;
       switch (skill.category) {
         case "Attack":
-          target.currentHp -= skill.power;
-          msg = `${target.name} に ${skill.power} ダメージ！`;
-          this.battleMessage = msg;
+          if(target.isDefencing){
+            msg = `${target.name} は ぼうぎょ している！`;
+            this.battleMessage = msg;
+            target.isDefencing = false;
+          } else {
+            target.currentHp -= skill.power;
+            msg = `${target.name} に ${skill.power} ダメージ！`;
+            this.battleMessage = msg;
+          }
           break;
-        case "Defense":
+        case "Defence":
           user.isDefencing = true;
-          msg = `${user.name} は ぼうぎょ している！`;
+          msg = `${user.name} は ぼうぎょ した！`;
           this.battleMessage = msg;
           break;
         case "Recovery":
@@ -274,7 +293,8 @@ export default {
             break;
           case "confuse":
             target.isConfusing = true;
-            msg = `${target.name} は混乱した！`;
+            msg = `${target.name} は混乱して自分をこうげきした！`;
+            target.currentHp -= 20;
             this.battleMessage = msg;
             break;
         }
@@ -302,7 +322,6 @@ export default {
         return;
       } else if (this.opponentPokemon.isConfusing) {
         this.battleMessage = `${this.opponentPokemon.name} は 混乱して自分を攻撃した！`;
-        this.opponentPokemon.currentHp -= 20;
         this.opponentPokemon.isConfusing = false;
         this.gameState.currentPhase = GamePhase.PLAYER_TURN;
         return;
@@ -385,15 +404,12 @@ export default {
   },
   computed: {
     playerHpWidth() {
-      return (
-        (this.playerPokemon.currentHp / this.playerPokemon.maxHp) * 100 + "%"
-      );
-    },
-    opponentHpWidth() {
-      return (
-        (this.opponentPokemon.currentHp / this.opponentPokemon.maxHp) * 100 +
-        "%"
-      );
+    const width = (this.playerPokemon.currentHp / this.playerPokemon.maxHp) * 100;
+    return `${Math.max(0, width)}%`;
+  },
+  opponentHpWidth() {
+    const width = (this.opponentPokemon.currentHp / this.opponentPokemon.maxHp) * 100;
+    return `${Math.max(0, width)}%`
     },
   },
   watch: {
