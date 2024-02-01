@@ -1,7 +1,7 @@
 <template>
   <h4>トレーナー情報画面</h4>
   <div class="trainer-info-page q-pa-md">
-    <q-btn label="トップページに戻る" @click="goToStartPage" color="primary" />
+    <q-btn label="トレーナー選択に戻る" @click="goToStartPage" color="primary" />
     <q-btn color="primary" @click="goToPokemonCatchPage">ポケモンゲット</q-btn>
     <div v-if="isLoading">
       <!-- ローディングインジケーターを表示 -->
@@ -11,6 +11,10 @@
       <q-card v-if="trainer">
         <q-card-section>
           <div class="text-h6">{{ trainer.name }}</div>
+          <div
+          v-if="trainer.pokemons && trainer.pokemons.length > 0"
+          class="pokemon-container"
+          >
           <div>
             <q-btn
               label="ポケモンチームバトル"
@@ -18,10 +22,6 @@
               @click="goToTeamBattle(trainer.pokemons)"
             />
           </div>
-          <div
-            v-if="trainer.pokemons && trainer.pokemons.length > 0"
-            class="pokemon-container"
-          >
             <div
               v-for="(pokemon, index) in trainer.pokemons"
               :key="pokemon.name"
@@ -61,15 +61,6 @@
       </q-card>
     </div>
   </div>
-  <!-- <div>
-    <confirm-dialog
-      :model-value="showDialog"
-      title="削除確認"
-      message="このポケモンを削除してもよろしいですか？"
-      @confirm="confirmRemovePokemon"
-      @update:modelValue="showDialog = $event"
-    />
-  </div> -->
 </template>
 
 <style>
@@ -93,19 +84,14 @@
 <script>
 import { fetchTrainerInfo, updateTrainer } from "../services/trainerService";
 import { getPokemonInfo } from "../services/pokemonService";
-// import ConfirmDialog from "src/components/ConfirmDialog.vue";
 
 export default {
-  // components: {
-  //   ConfirmDialog,
-  // },
+
   data() {
     return {
       trainer: null,
       tempNicknames: [], // 一時的なニックネームを保持するオブジェクト
-      isLoading: false,
-      // showDialog: false,
-      // currentPokemonName: null, // 確認ダイアログで選択されたポケモン名
+      isLoading: true,
     };
   },
   async created() {
@@ -183,7 +169,7 @@ export default {
       this.$router.push({ name: "PokemonCatchPage" });
     },
     goToStartPage() {
-      this.$router.push({ name: "StartPage" });
+      this.$router.push({ name: "TrainerSelectionPage" });
     },
     goToBattle(pokemonName) {
       this.$router.push({
