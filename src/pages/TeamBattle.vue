@@ -19,7 +19,17 @@
             :class="{ img: true, hopping: activePokemonName === pokemon.name }"
           />
           <div class="pokemon-details">
-            <h5>{{ pokemon.name }}</h5>
+            <h5>
+              {{ pokemon.name
+              }}<span
+                v-if="pokemon.isSleeping"
+                class="status-indicator sleeping"
+                >sleeping</span
+              >
+              <span v-if="pokemon.isConfusing" class="status-indicator confused"
+                >confused</span
+              >
+            </h5>
             <div class="pokemon-hp">
               <span>{{ pokemon.currentHp }} / {{ pokemon.maxHp }}</span>
               <div
@@ -43,7 +53,15 @@
             :class="{ img: true, hopping: activePokemonName === pokemon.name }"
           />
           <div class="pokemon-details">
-            <h5>{{ pokemon.name }}</h5>
+            <h5>
+              {{ pokemon.name }}
+              <span v-if="pokemon.isSleeping" class="status-indicator sleeping"
+                >sleeping</span
+              >
+              <span v-if="pokemon.isConfusing" class="status-indicator confused"
+                >confused</span
+              >
+            </h5>
             <div class="pokemon-hp">
               <span>{{ pokemon.currentHp }} / {{ pokemon.maxHp }}</span>
               <div
@@ -100,6 +118,29 @@
   justify-content: center;
   width: 100%;
   margin-left: 10px; /* 画像との間隔 */
+}
+
+/* ステータス表示用の基本スタイル */
+.status-indicator {
+  display: inline-block;
+  padding: 2px 8px;
+  margin-left: 8px;
+  font-style: normal;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 0.8em;
+}
+
+/* 眠っている状態のスタイル */
+.sleeping {
+  background-color: #4a90e2;
+  border: 1px solid #3178c6;
+}
+
+/* 混乱している状態のスタイル */
+.confused {
+  background-color: #f5a623;
+  border: 1px solid #d48806;
 }
 
 .pokemon-hp {
