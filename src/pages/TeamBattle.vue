@@ -20,10 +20,12 @@
           />
           <div class="pokemon-details">
             <h5>
-              {{ pokemon.name
-              }}<span
-                v-if="pokemon.isSleeping"
-                class="status-indicator sleeping"
+              {{ pokemon.name }}
+              <span
+                v-if="pokemon.isDefencing"
+                class="status-indicator defencing"
+                >defencing</span
+              ><span v-if="pokemon.isSleeping" class="status-indicator sleeping"
                 >sleeping</span
               >
               <span v-if="pokemon.isConfusing" class="status-indicator confused"
@@ -55,6 +57,11 @@
           <div class="pokemon-details">
             <h5>
               {{ pokemon.name }}
+              <span
+                v-if="pokemon.isDefencing"
+                class="status-indicator defencing"
+                >defencing</span
+              >
               <span v-if="pokemon.isSleeping" class="status-indicator sleeping"
                 >sleeping</span
               >
@@ -141,6 +148,11 @@
 .confused {
   background-color: #f5a623;
   border: 1px solid #d48806;
+}
+
+.defencing {
+  background-color: rgb(240, 143, 199);
+  border: 1px solid rgb(196, 70, 143);
 }
 
 .pokemon-hp {
