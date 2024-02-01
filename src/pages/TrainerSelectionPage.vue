@@ -2,6 +2,11 @@
   <div>
     <h4>トレーナー選択</h4>
     <q-btn label="トップページに戻る" @click="goToStartPage" color="primary" />
+    <div v-if="isLoading">
+      <!-- ローディングインジケーターを表示 -->
+      <q-spinner color="primary" size="50px" />
+    </div>
+    <div v-else>
     <div v-for="trainer in trainers" :key="trainer.name" class="q-my-md">
       <q-card>
         <q-card-section>
@@ -25,6 +30,7 @@
           />
         </q-card-actions>
       </q-card>
+    </div>
     </div>
     <confirm-dialog
       :model-value="showDialog"
@@ -71,6 +77,7 @@ export default {
       trainers: [], // トレーナーリスト
       showDialog: false, // 確認ダイアログの表示フラグ
       currentTrainerName: null, // 確認ダイアログで選択されたトレーナー名
+      isLoading: true, // ローディングインジケーターの表示フラグ
     };
   },
   async created() {
@@ -89,6 +96,8 @@ export default {
           };
         })
       );
+
+      this.isLoading = false;
     } catch (error) {
       console.error("トレーナー情報の取得に失敗しました", error);
     }

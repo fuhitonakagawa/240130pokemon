@@ -3,6 +3,11 @@
   <div class="trainer-info-page q-pa-md">
     <q-btn label="トップページに戻る" @click="goToStartPage" color="primary" />
     <q-btn color="primary" @click="goToPokemonCatchPage">ポケモンゲット</q-btn>
+    <div v-if="isLoading">
+      <!-- ローディングインジケーターを表示 -->
+      <q-spinner color="primary" size="50px" />
+    </div>
+    <div v-else>
     <q-card v-if="trainer">
       <q-card-section>
         <div class="text-h6">{{ trainer.name }}</div>
@@ -47,6 +52,7 @@
         <div v-else>ポケモンを持っていません。</div>
       </q-card-section>
     </q-card>
+    </div>
   </div>
   <!-- <div>
     <confirm-dialog
@@ -91,12 +97,14 @@ export default {
     return {
       trainer: null,
       tempNicknames: [], // 一時的なニックネームを保持するオブジェクト
+      isLoading: false,
       // showDialog: false,
       // currentPokemonName: null, // 確認ダイアログで選択されたポケモン名
     };
   },
   async created() {
     await this.loadTrainerData();
+    this.isLoading = false;
   },
   methods: {
     async loadTrainerData() {
